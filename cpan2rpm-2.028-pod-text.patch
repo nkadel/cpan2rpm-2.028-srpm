@@ -1,0 +1,20 @@
+--- cpan2rpm-2.028/cpan2rpm.parser	2012-02-08 01:20:16.286033840 -0500
++++ cpan2rpm-2.028/cpan2rpm	2012-02-08 01:20:16.288032651 -0500
+@@ -31,7 +31,7 @@
+ use warnings;
+ use Getopt::Long;
+ use Sys::Hostname;
+-use Pod::Text;
++use Pod::Parser;
+ 
+ my ($ME, $RPM, $TMPDIR, %RPMDIR, $CWD, %info, %meta, $ARGS);
+ 
+@@ -362,7 +362,7 @@
+ 
+ sub get_meta {
+     my $info = shift || $_; local $_;
+-    my $pod = Pod::Text->new();
++    my $pod = Pod::Parser->new();
+ 
+     print "Metadata retrieval\n";
+ 
