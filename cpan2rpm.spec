@@ -12,7 +12,7 @@
 Name:      cpan2rpm
 Summary:   cpan2rpm - A Perl module packager
 Version:   2.028
-Release:   0.2
+Release:   0.4
 Vendor:    Erick Calder <ecalder@cpan.org>
 Packager:  Arix International <cpan2rpm@arix.com>
 License:   GPLv2
@@ -20,7 +20,10 @@ Group:     Applications/CPAN
 URL:       http://www.cpan.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%(id -u -n)
 buildArch: noarch
-#prefix:    %(echo %{_prefix})
+BuildRequires: perl-libwww-perl
+BuildRequires: perl(ExtUtils::MakeMaker)
+BuildRequires: fakeroot
+
 Requires:  %([ -e /etc/SuSE-release -o -e /etc/UnitedLinux-release ] && SuSE=1;ver=`rpm -q rpm --qf %%{version}|awk -F . '{print $1}'`;[ $ver -le 3 -o -n "$SuSE" ] && echo rpm || echo rpm-build)
 Source:    cpan2rpm-2.028.tar.gz
 Patch0:	   cpan2rpm-2.028-pod-text.patch
@@ -66,7 +69,9 @@ grep -rsl '^#!.*perl' . |
 grep -v '.bak$' |xargs --no-run-if-empty \
 %__perl -MExtUtils::MakeMaker -e 'MY->fixin(@ARGV)'
 CFLAGS="$RPM_OPT_FLAGS"
-%{__perl} Makefile.PL `%{__perl} -MExtUtils::MakeMaker -e ' print qq|PREFIX=%{buildroot}%{_prefix}| if \$ExtUtils::MakeMaker::VERSION =~ /5\.9[1-6]|6\.0[0-5]/ '`
+# Add INSTALL_BASE for RHEL 6
+%{__perl} Makefile.PL `%{__perl} -MExtUtils::MakeMaker -e ' print qq|PREFIX=%{buildroot}%{_prefix}| if \$ExtUtils::MakeMaker::VERSION =~ /5\.9[1-6]|6\.0[0-5]/ '` \
+	  INSTALL_BASE=%{_prefix}
 %{__make} 
 %if %maketest
 %{__make} test
@@ -143,6 +148,9 @@ find %{buildroot}%{_prefix}             \
 %defattr(-,root,root)
 
 %changelog
+* Tue Apr  9 2012 Nico Kadel-Garcia <nkadel@gmail.com>
+- Add perl(ExtUtils::MakeMaker) build requirement
+
 * Wed Feb  8 2012 Nico Kadel-Garcia <nkadel@gmail.com>
 - Patch to Replace Pod::Text with Pod::Parser to allow compilation on RHEL 6
 - Update license notice to GPLv2 to match original license
