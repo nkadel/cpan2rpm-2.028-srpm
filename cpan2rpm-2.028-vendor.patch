@@ -1,0 +1,17 @@
+Insert 'INSTALLDIRS=vendor to 'perl Makefile.PL' commands fo perl-5.10
+install is /usr/lib{64}/perl5, not /usr/local/lib/perl5 or /usr/lib/perl5.
+
+		Nico Kadel-Garcia <nkadel@gmail.com>
+		2012/08/20
+
+--- cpan2rpm-2.028/cpan2rpm.vendor	2012-08-21 00:20:17.179910122 -0400
++++ cpan2rpm-2.028/cpan2rpm	2012-08-21 00:34:33.542971314 -0400
+@@ -887,7 +888,7 @@
+         ? qq/
+             $info->{fixin}
+             CFLAGS="\$RPM_OPT_FLAGS"
+-            %{__perl} Makefile.PL $info->{"make-maker"}
++            %{__perl} Makefile.PL INSTALLDIRS=vendor $info->{"make-maker"}
+             %{__make} $info->{"make"}
+             %if %maketest
+                 %{__make} test

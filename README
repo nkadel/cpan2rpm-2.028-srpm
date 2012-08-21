@@ -5,8 +5,13 @@ respective directories.
 
 The modified cpan2rpm.spec file adds some missing dependencies, for
 tools like perl-libwww-perl, perl(ExtUtils::MakeMaker), and fakeroot.
+It's also been modified with INSTALLDIRS=vendor set to get
+installations in /usr instead of /usr/local for recent perl releases.
 
-It's also been modified with INSTALL_BASE set to get installations in
-/usr instead of /usr/local.
+To build with cpan2rpm itself, and the patches included use this.
+
+   cpan2rpm cpan2rpm-2.028.tar.gz  \
+   	    --patch=$PWD/cpan2rpm-2.028-vendor.patch \
+	    --patch=$PWD/cpan2rpm-2.028-pod-text.patch
 
       	   		     Nico Kadel-Garcia <nkadel@gmail.com>

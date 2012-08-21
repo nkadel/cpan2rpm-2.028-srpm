@@ -27,6 +27,7 @@ BuildRequires: fakeroot
 Requires:  %([ -e /etc/SuSE-release -o -e /etc/UnitedLinux-release ] && SuSE=1;ver=`rpm -q rpm --qf %%{version}|awk -F . '{print $1}'`;[ $ver -le 3 -o -n "$SuSE" ] && echo rpm || echo rpm-build)
 Source:    cpan2rpm-2.028.tar.gz
 Patch0:	   cpan2rpm-2.028-pod-text.patch
+Patch1:    cpan2rpm-2.028-vendor.patch
 
 %description
 This script generates an RPM package from a Perl module.  It uses the standard RPM file structure and creates a spec file, a source RPM, and a binary, leaving these in their respective directories.
@@ -62,6 +63,7 @@ will be performed in that directory in order to create the tarball necessary for
 %prep
 %setup -q -n %{pkgname}-%{version} 
 %patch0 -p1 -b .parser
+%patch1 -p1 -b .vendor
 chmod -R u+w %{_builddir}/%{pkgname}-%{version}
 
 %build
@@ -69,9 +71,8 @@ grep -rsl '^#!.*perl' . |
 grep -v '.bak$' |xargs --no-run-if-empty \
 %__perl -MExtUtils::MakeMaker -e 'MY->fixin(@ARGV)'
 CFLAGS="$RPM_OPT_FLAGS"
-# Add INSTALL_BASE for RHEL 6
-%{__perl} Makefile.PL `%{__perl} -MExtUtils::MakeMaker -e ' print qq|PREFIX=%{buildroot}%{_prefix}| if \$ExtUtils::MakeMaker::VERSION =~ /5\.9[1-6]|6\.0[0-5]/ '` \
-	  INSTALL_BASE=%{_prefix}
+# Add INSTALLDIRS=vendir for perl 5.10, to avoud /usr/local/lib
+%{__perl} Makefile.PL  INSTALLDIRS=vendor `%{__perl} -MExtUtils::MakeMaker -e ' print qq|PREFIX=%{buildroot}%{_prefix}| if \$ExtUtils::MakeMaker::VERSION =~ /5\.9[1-6]|6\.0[0-5]/ '`
 %{__make} 
 %if %maketest
 %{__make} test
@@ -150,6 +151,7 @@ find %{buildroot}%{_prefix}             \
 %changelog
 * Tue Apr  9 2012 Nico Kadel-Garcia <nkadel@gmail.com>
 - Add perl(ExtUtils::MakeMaker) build requirement
+- Add INSTALLDIRS=vendor and cpan2rpm patch to include it for new .spec files
 
 * Wed Feb  8 2012 Nico Kadel-Garcia <nkadel@gmail.com>
 - Patch to Replace Pod::Text with Pod::Parser to allow compilation on RHEL 6
