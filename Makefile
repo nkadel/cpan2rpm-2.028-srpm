@@ -11,7 +11,7 @@ LANG=C
 
 MOCKS+=epel-6-x86_64
 MOCKS+=epel-5-x86_64
-#MOCKS+=epel-4-x86_64
+MOCKS+=epel-4-x86_64
 
 SPEC := `ls *.spec | head -1`
 PKGNAME := "`ls *.spec | head -1 | sed 's/.spec$$//g'`"
@@ -36,18 +36,22 @@ build:: srpm FORCE
 	rpmbuild --rebuild `ls *.src.rpm | grep -v ^epel-`
 
 $(MOCKS):: verifyspec FORCE
-	@echo "Building $@ RPMS with $(SPEC)"
-	@rm -rf $@
-	mock -q -r $@ --sources=$(PWD) \
-		--resultdir=$(PWD)/$@ \
-		--buildsrpm --spec=$(SPEC)
-	@echo "Storing $@/*.src.rpm in $@.rpm"
-	/bin/mv $@/*.src.rpm $@.src.rpm
-	@echo "Actally building RPMS in $@"
-	@rm -rf $@
-	mock -q -r $@ \
-	     --resultdir=$(PWD)/$@ \
-	     $@.src.rpm
+	@if [ -e $@ -a -n "`find $@ -name \*.rpm`" ]; then \
+		echo "Skipping RPM populated $@"; \
+	else \
+		echo "Building $@ RPMS with $(SPEC)"; \
+		rm -rf $@; \
+		mock -q -r $@ --sources=$(PWD) \
+		    --resultdir=$(PWD)/$@ \
+		    --buildsrpm --spec=$(SPEC); \
+		echo "Storing $@/*.src.rpm in $@.rpm"; \
+		/bin/mv $@/*.src.rpm $@.src.rpm; \
+		echo "Actally building RPMS in $@"; \
+		rm -rf $@; \
+		mock -q -r $@ \
+		     --resultdir=$(PWD)/$@ \
+		     $@.src.rpm; \
+	fi
 
 mock:: $(MOCKS)
 
