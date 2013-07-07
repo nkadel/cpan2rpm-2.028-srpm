@@ -149,7 +149,7 @@ find %{buildroot}%{_prefix}             \
 %defattr(-,root,root)
 
 %changelog
-* Tue Apr  9 2012 Nico Kadel-Garcia <nkadel@gmail.com>
+* Mon Apr  9 2012 Nico Kadel-Garcia <nkadel@gmail.com>
 - Add perl(ExtUtils::MakeMaker) build requirement
 - Add INSTALLDIRS=vendor and cpan2rpm patch to include it for new .spec files
 
