@@ -12,7 +12,7 @@
 Name:      cpan2rpm
 Summary:   cpan2rpm - A Perl module packager
 Version:   2.028
-Release:   0.4
+Release:   0.5
 Vendor:    Erick Calder <ecalder@cpan.org>
 Packager:  Arix International <cpan2rpm@arix.com>
 License:   GPLv2
@@ -25,7 +25,8 @@ BuildRequires: perl(ExtUtils::MakeMaker)
 BuildRequires: fakeroot
 
 Requires:  %([ -e /etc/SuSE-release -o -e /etc/UnitedLinux-release ] && SuSE=1;ver=`rpm -q rpm --qf %%{version}|awk -F . '{print $1}'`;[ $ver -le 3 -o -n "$SuSE" ] && echo rpm || echo rpm-build)
-Source:    cpan2rpm-2.028.tar.gz
+Requires:  %{_bindir}/rpmsign
+Source:    ftp://ftp.arix.com/cpan2rpm-2.028.tar.gz
 Patch0:	   cpan2rpm-2.028-pod-text.patch
 Patch1:    cpan2rpm-2.028-vendor.patch
 
@@ -149,6 +150,9 @@ find %{buildroot}%{_prefix}             \
 %defattr(-,root,root)
 
 %changelog
+* Sat Jul 13 2013 Nico Kadel-Garcia <nkadel@gmail.com>
+- Add rpmsign dependency for Fedora 19.
+
 * Mon Apr  9 2012 Nico Kadel-Garcia <nkadel@gmail.com>
 - Add perl(ExtUtils::MakeMaker) build requirement
 - Add INSTALLDIRS=vendor and cpan2rpm patch to include it for new .spec files
