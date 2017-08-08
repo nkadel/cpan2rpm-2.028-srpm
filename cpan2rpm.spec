@@ -12,7 +12,7 @@
 Name:      cpan2rpm
 Summary:   cpan2rpm - A Perl module packager
 Version:   2.028
-Release:   0.5
+Release:   0.6
 Vendor:    Erick Calder <ecalder@cpan.org>
 Packager:  Arix International <cpan2rpm@arix.com>
 License:   GPLv2
@@ -22,6 +22,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%(id -u -n)
 buildArch: noarch
 BuildRequires: perl-libwww-perl
 BuildRequires: perl(ExtUtils::MakeMaker)
+BuildRequires: perl(Pod::Parser)
 BuildRequires: fakeroot
 
 Requires:  %([ -e /etc/SuSE-release -o -e /etc/UnitedLinux-release ] && SuSE=1;ver=`rpm -q rpm --qf %%{version}|awk -F . '{print $1}'`;[ $ver -le 3 -o -n "$SuSE" ] && echo rpm || echo rpm-build)
@@ -150,6 +151,9 @@ find %{buildroot}%{_prefix}             \
 %defattr(-,root,root)
 
 %changelog
+* Tue Aug 08 2017 Michael DePaulo - 2.028-0.6
+- Add perl(Pod::Parser) build requirement
+
 * Sat Jul 13 2013 Nico Kadel-Garcia <nkadel@gmail.com>
 - Add rpmsign dependency for Fedora 19.
 
